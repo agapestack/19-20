@@ -1,0 +1,5 @@
+/back/log/
+/back/tmp/
+*.log
+front/node_modules
+.vscode

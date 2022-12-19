@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+}
+
+.border-1 {
+  border-width: 1px;
+  border-color: black;
+}
+
+.square {
+  position: relative;
+  height: 0;
+  width: 50%;
+  padding-bottom: 50%;
+}
+
+.media-card {
+  height: 240px !important;
+  width: 320px !important;
+}
+
+.lobby-background {
+  background-color: #3d3c40;
+}
+
+.kulami-board-background {
+  /* background-image: url("./assets/wood_background.jpg"); */
+  background-color: #BA8C63;
+  background-size: contain;
+  padding: 2rem !important;
+}
