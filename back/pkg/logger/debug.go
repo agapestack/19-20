@@ -24,7 +24,6 @@ func InitDebug() {
 
 func Debug(msg string) {
 	if debugLogger != nil {
-		fmt.Println(msg)
 		debugLogger.Println(msg)
 	}
 }

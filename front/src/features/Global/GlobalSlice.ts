@@ -2,12 +2,20 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import {
   GameDetail,
-  GlobalStateInterface,
 } from "../../config/global.config";
+
+export interface GlobalStateInterface {
+  // gameChoice is the index of the selected game in GameDetail
+  gameChoice: number;
+  username: string;
+  roomID: string;
+}
+
 
 const initialState: GlobalStateInterface = {
   gameChoice: 0,
   username: "",
+  roomID: "",
 };
 
 export const globalSlice = createSlice({
@@ -26,11 +34,14 @@ export const globalSlice = createSlice({
     }, 
     updateUsername: (state, action: PayloadAction<string>) => {
       state.username = action.payload;
+    }, 
+    setRoomId: (state, action: PayloadAction<string>) => {
+      state.roomID = action.payload;
     }
   },
 });
 
-export const {incrementGameChoice, decrementGameChoice, updateUsername} = globalSlice.actions;
+export const {incrementGameChoice, decrementGameChoice, updateUsername, setRoomId} = globalSlice.actions;
 export const selectGlobal = (state: RootState) => state.global;
 
 export default globalSlice.reducer;

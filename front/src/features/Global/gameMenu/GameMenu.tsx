@@ -1,36 +1,28 @@
 import {
   Button,
   Card,
-  CardContent,
-  IconButton,
-  TextField,
-  Typography,
+  CardContent, IconButton, Typography
 } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import {
-  decrementGameChoice,
-  incrementGameChoice,
-  updateUsername,
-} from "../GlobalSlice";
+import { decrementGameChoice, incrementGameChoice } from "../GlobalSlice";
 import { GameDetail } from "../../../config/global.config";
 import { WsContext } from "../../../context/WebsocketContext";
+import { useNavigate } from "react-router-dom";
 
 const GameMenu = () => {
-  const [isValidUsername, setIsValidUsername] = useState(false);
   const global = useAppSelector((state) => state.global);
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const wsContext = useContext(WsContext);
 
   useEffect(() => {
-    if (global.username.length >= 6) {
-      setIsValidUsername(true);
-    } else {
-      setIsValidUsername(false);
+    if (global.roomID !== "") {
+      navigate(`/game/${global.roomID}`);
     }
-  }, [global.username]);
+  }, [global.roomID]);
 
   return (
     <div className="flex items-center justify-center w-screen h-screen overflow-hidden lobby-background">
@@ -63,41 +55,17 @@ const GameMenu = () => {
           </Typography>
         </CardContent>
 
-        {!wsContext.isConnected && (
-          <div className="flex flex-col justify-center items-center">
-            <TextField
-              variant="outlined"
-              label="username"
-              onChange={(e) => dispatch(updateUsername(e.target.value))}
-            ></TextField>
-            <div className="my-4">
-              <Button
-                variant="contained"
-                color="success"
-                disabled={!isValidUsername}
-                onClick={wsContext.CONN}
-              >
-                Connect
-              </Button>
-            </div>
+        <div className="flex justify-center items-center flex-col">
+          <div className="m-2">
+            <Button
+              className="w-64"
+              variant="contained"
+              onClick={wsContext.CREA}
+            >
+              Create a room
+            </Button>
           </div>
-        )}
-
-        {wsContext.isConnected && (
-          <div className="">
-            <div className="m-2">
-              <Button className="w-64" variant="contained">
-                Create a room
-              </Button>
-            </div>
-
-            <div className="m-2">
-              <Button className="w-64" variant="contained">
-                Join a room
-              </Button>
-            </div>
-          </div>
-        )}
+        </div>
       </Card>
     </div>
   );

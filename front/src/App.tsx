@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { gameTypeObject } from "./config/global.config";
 import { ToastContainer } from "react-toastify";
 import GameMenu from "./features/Global/gameMenu/GameMenu";
+import Lobby from "./features/Global/gameMenu/Lobby";
 
 function App() {
   return (
@@ -12,10 +13,11 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage></HomePage>} />
         <Route path="/game/menu" element={<GameMenu></GameMenu>} />
-        <Route
+        <Route path="/game/:roomID" element={<Lobby></Lobby>} />
+        {/* <Route
           path="/game/kulami"
           element={<Game gameName={gameTypeObject.kulami} />}
-        />
+        /> */}
       </Routes>
 
       <ToastContainer

@@ -9,8 +9,13 @@ import (
 func InitRouter() *mux.Router {
 	r := mux.NewRouter()
 
+	// init room map
+	handler.Rooms.Init()
+
 	r.Use(middleware.SessionMiddleware)
-	r.HandleFunc("/test", handler.TestRoute)
-	r.HandleFunc("/ws", handler.HandleWebSocket)
+
+	r.HandleFunc("/create", handler.CreateRoom)
+	r.HandleFunc("/join/{roomID}", handler.JoinRoom)
+
 	return r
 }

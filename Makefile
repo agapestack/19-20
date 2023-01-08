@@ -9,7 +9,8 @@ all: help
 ## install
 install: install-env install-app install-dev ## install everything
 	
-install-env: ## install go & node
+install-env: ## install go & node, generate default env
+	cp back/.env.example back/.env
 
 install-app: ## install back and front dependencies
 	cd front; npm i; cd ..
