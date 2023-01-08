@@ -6,9 +6,19 @@ RESET  := $(shell tput -Txterm sgr0)
 
 all: help
 
+## install
+install: install-env install-app install-dev ## install everything
+	
+install-env: ## install go & node
+
+install-app: ## install back and front dependencies
+	cd front; npm i; cd ..
+install-dev: ## install dev tools
+	curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh -s
+
 ## run
 run-back: ## run server
-	cd back; air; cd .. 
+	cd back; air; cd ..
 
 run-front: ## run react client
 	cd front; npm run start
