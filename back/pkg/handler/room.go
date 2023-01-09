@@ -48,6 +48,7 @@ func (r *RoomMap) DeleteRoom(roomID string) {
 	delete(r.Map, roomID)
 }
 
+// todo: check if room already full
 func (r *RoomMap) JoinRoom(roomID string, host bool, conn *websocket.Conn) {
 	r.Mutex.Lock()
 	defer r.Mutex.Unlock()

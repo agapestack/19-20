@@ -7,11 +7,6 @@ import {
 } from "../config/global.config";
 import { setRoomId } from "../features/Global/GlobalSlice";
 
-interface WsMessage {
-  Message: string
-  RoomId: string
-}
-
 interface WsContextInterface {
   CREA: () => void;
   JOIN: (roomId: string) => void;
@@ -19,9 +14,9 @@ interface WsContextInterface {
 }
 
 const defaultState: WsContextInterface = {
-  CREA: () => {},
-  JOIN: (roomId: string) => {},
-  SEND: (message: string) => {},
+  CREA: () => { },
+  JOIN: (roomId: string) => { },
+  SEND: (message: string) => { },
 };
 
 export const WsContext = createContext<WsContextInterface>(defaultState);
@@ -34,7 +29,7 @@ export const WebsocketContextProvider: FC<Props> = ({ children }) => {
   const socketRef = useRef<WebSocket>();
 
   const JOIN = (roomID: string) => {
-    if(socketRef.current)
+    if (socketRef.current)
       return
     socketRef.current = new WebSocket(socketAddr + `/join/${roomID}`);
 
@@ -45,8 +40,7 @@ export const WebsocketContextProvider: FC<Props> = ({ children }) => {
 
     // onMessage
     socketRef.current.addEventListener("message", (e) => {
-      console.log("Received message: %s from client", e);
-      console.log("TEST")
+      console.log("Received message: %s from client", e.data);
     });
   };
 
@@ -78,3 +72,21 @@ export const WebsocketContextProvider: FC<Props> = ({ children }) => {
     </WsContext.Provider>
   );
 };
+
+// https://webrtc.org/getting-started/peer-connections
+async function makeCall(socket: WebSocket) {
+  const configuration = { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }] }
+  const peerConnection = new RTCPeerConnection(configuration);
+
+  socket.addEventListener('message', async message => {
+    console.log(message)
+    // if (message.answer) {
+    //   const remoteDesc = new RTCSessionDescription(message.answer);
+    //   await peerConnection.setRemoteDescription(remoteDesc);
+    // }
+  });
+  // const offer = await peerConnection.createOffer();
+  // await peerConnection.setLocalDescription(offer);
+  // signalingChannel.send({ 'offer': offer });
+
+}

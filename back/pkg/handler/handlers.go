@@ -26,7 +26,6 @@ func broadcaster() {
 	for {
 		msg := <-broadcast
 		for _, client := range Rooms.Map[msg.RoomID] {
-			fmt.Println("test")
 			// if player is not the sender send msg
 			if client.Conn != msg.Client {
 				err := client.Conn.WriteJSON(msg.Message)

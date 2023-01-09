@@ -14,10 +14,8 @@ function App() {
         <Route path="/" element={<HomePage></HomePage>} />
         <Route path="/game/menu" element={<GameMenu></GameMenu>} />
         <Route path="/game/:roomID" element={<Lobby></Lobby>} />
-        {/* <Route
-          path="/game/kulami"
-          element={<Game gameName={gameTypeObject.kulami} />}
-        /> */}
+        <Route path="/kulami" element={<Game gameName={gameTypeObject.kulami} />} />
+        <Route path="/kulami" element={<Game gameName={gameTypeObject.quantik} />} /> 
       </Routes>
 
       <ToastContainer
