@@ -16,7 +16,7 @@ const Lobby = () => {
   useEffect(() => {
     if (roomID) {
       setRoomId(roomID);
-      wsContext.JOIN(roomID);
+      wsContext.joinRoom(roomID);
     } else {
       navigate("/")
     }

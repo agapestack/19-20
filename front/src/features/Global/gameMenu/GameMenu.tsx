@@ -60,7 +60,7 @@ const GameMenu = () => {
             <Button
               className="w-64"
               variant="contained"
-              onClick={wsContext.CREA}
+              onClick={wsContext.createRoom}
             >
               Create a room
             </Button>

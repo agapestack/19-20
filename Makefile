@@ -24,20 +24,6 @@ run-back: ## run server
 run-front: ## run react client
 	cd front; npm run start
 
-## docker
-docker-list: ## list running container
-	sudo docker container ls
-
-docker-restart: docker-stop docker-run ## restart docker-compose
-	
-docker-run: ## launch docker-compose
-	sudo docker-compose -f "back/docker-compose.yml" up -d --build
-
-docker-stop: ## stop docker-compose
-	sudo docker-compose -f "back/docker-compose.yml" down
-
-
-
 ## Help:
 help: ## Show this help.
 	@echo ''

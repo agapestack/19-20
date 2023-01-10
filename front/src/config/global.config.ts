@@ -1,16 +1,10 @@
-export const IS_DEV: boolean = true;
+export const IS_DEV = false;
 
-
-// ________________________NETWORK RELATED CONFIG_____________________________
+// ________________________NETWORK CONFIG_____________________________
 export const serverAddr: string = "http://localhost:7777";
 export const socketAddr: string = "ws://localhost:7777";
 
-// free STUN server, thx google
-export const rtcConfig: RTCConfiguration = {
-  iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-}
-
-// ________________________GAME GLOBAL CONFIG_____________________________
+// ________________________GAME CONFIG_____________________________
 export type GAME_NAME = "KULAMI" | "QUANTIK" | "";
 export type MENU_TYPE = "MAPPING" | "PLAY" | "";
 

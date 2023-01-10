@@ -4,17 +4,14 @@ go 1.19
 
 require (
 	github.com/go-redis/redis/v9 v9.0.0-rc.1
+	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/sessions v1.2.1
 	github.com/gorilla/websocket v1.5.0
 	github.com/joho/godotenv v1.4.0
 )
 
-require (
-	github.com/felixge/httpsnoop v1.0.1 // indirect
-	github.com/gorilla/handlers v1.5.1 // indirect
-	github.com/rs/cors v1.8.3 // indirect
-)
+require github.com/felixge/httpsnoop v1.0.1 // indirect
 
 require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
