@@ -11,7 +11,7 @@ const Lobby = () => {
   const navigate = useNavigate();
   const wsContext = useContext(WsContext);
   let { roomID } = useParams<string>();
-  const [text, setText] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
 
   useEffect(() => {
     if (roomID) {
@@ -39,11 +39,12 @@ const Lobby = () => {
           </div>
 
           <div className="">
-            <TextField
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-            ></TextField>
-            <Button onClick={() => wsContext.SEND(text)}>Send</Button>
+            {/* <TextField
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              label="Choose your username"
+            ></TextField> */}
+            {/* <Button onClick={() => wsContext.SEND(username, messageType.join)}>Send</Button> */}
           </div>
         </div>
 
