@@ -5,8 +5,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/agapestack/19-20/back/pkg/config"
-	"github.com/agapestack/19-20/back/pkg/router"
+	"github.com/agapestack/19-20/back/internal/config"
+	handler "github.com/agapestack/19-20/back/internal/handlers"
+	"github.com/agapestack/19-20/back/internal/router"
 	"github.com/gorilla/handlers"
 	"github.com/joho/godotenv"
 )
@@ -19,9 +20,10 @@ func main() {
 	}
 	config.Init()
 
+	go handler.ListenWsChannel()
+
 	router := router.InitRouter()
 
 	http.Handle("/", router)
-
 	http.ListenAndServe(os.Getenv("SERVER_PORT"), handlers.CORS()(router))
 }

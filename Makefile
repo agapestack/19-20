@@ -15,11 +15,11 @@ install-env: ## install go & node, generate default env
 install-app: ## install back and front dependencies
 	cd front; npm i; cd ..
 install-dev: ## install dev tools
-	curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh -s
+	curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
 
 ## run
 run-back: ## run server
-	cd back; air; cd ..
+	go run back/cmd/*.go
 
 run-front: ## run react client
 	cd front; npm run start

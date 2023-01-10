@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/agapestack/19-20/back/pkg/logger"
 	"github.com/go-redis/redis/v9"
 	"github.com/gorilla/sessions"
 	"github.com/gorilla/websocket"
@@ -17,11 +16,12 @@ var Upgrader websocket.Upgrader
 func Init() {
 	initCookieStore()
 	initUpgrader()
-	logger.InitDebug()
 }
 
 func initUpgrader() {
 	Upgrader = websocket.Upgrader{
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
 		CheckOrigin: func(r *http.Request) bool {
 			return true
 		},

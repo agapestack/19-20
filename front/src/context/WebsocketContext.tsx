@@ -36,12 +36,12 @@ export const WebsocketContextProvider: FC<Props> = ({ children }) => {
     // onOpen
     socketRef.current.addEventListener("open", () => {
       console.log("socket opened");
-      socketRef.current?.send(JSON.stringify({ type: "ready", message: "Yo" }));
     });
 
     // onMessage
     socketRef.current.addEventListener("message", async (e) => {
       const message = JSON.parse(e.data);
+      console.log(message)
 
       switch (message.type) {
       }

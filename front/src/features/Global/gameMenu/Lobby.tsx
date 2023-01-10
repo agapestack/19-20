@@ -24,8 +24,10 @@ const Lobby = () => {
 
   return (
     <div className="flex items-center justify-center w-screen h-screen overflow-hidden lobby-background">
-      <div className="bg-white rounded-lg p-8 m-8 flex flex-col">
-        <div className="flex justify-around items-center">
+    
+      <div className="bg-white rounded-lg p-8 m-8 flex flex-col w-96">
+        <Button href="/">Home</Button>
+        <div className="grid grid-cols-2">
           {/* parameter */}
           <div className="flex">
             <Typography>Parameters</Typography>
@@ -38,14 +40,7 @@ const Lobby = () => {
             <div className="">player2</div>
           </div>
 
-          <div className="">
-            {/* <TextField
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              label="Choose your username"
-            ></TextField> */}
-            {/* <Button onClick={() => wsContext.SEND(username, messageType.join)}>Send</Button> */}
-          </div>
+        
         </div>
 
         <div className="flex justify-center items-center">
