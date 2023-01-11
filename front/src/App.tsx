@@ -1,11 +1,10 @@
-import React from "react";
-import Game from "./features/Global/game/Game";
 import HomePage from "./features/Global/HomePage";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import GameSelection from "./features/Global/game/GameSelection";
 import GameLobby from "./features/Global/game/GameLobby";
-import { gameStateObject } from "./config/global.config";
+import Kulami from "./features/Kulami/Kulami";
+import Quantik from "./features/Quantik/Quantik";
 
 function App() {
   return (
@@ -14,6 +13,9 @@ function App() {
         <Route path="/" element={<HomePage></HomePage>} />
         <Route path="/game" element={<GameSelection></GameSelection>} />
         <Route path="/game/:roomID" element={<GameLobby></GameLobby>} />
+
+        <Route path="/kulami" element={<Kulami></Kulami>} />
+        <Route path="/quantik" element={<Quantik></Quantik>} />
       </Routes>
 
       <ToastContainer

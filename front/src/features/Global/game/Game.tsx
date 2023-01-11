@@ -17,11 +17,7 @@ interface GameProps {
 
 const Game = ({ gameState }: GameProps) => {
   const global = useAppSelector((state) => state.global);
-  // const navigate = useNavigate();
-  // const dispatch = useAppDispatch();
-  // const wsContext = useContext(WsContext);
 
-  // console.log("test")
 
   return (
     <div className="h-full w-full">

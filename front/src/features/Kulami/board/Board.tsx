@@ -1,9 +1,9 @@
-import React from "react";
 import { kulamiConfig } from "../../../config/kulami.config";
 import { generateRandomString } from "../../../utils/utils";
 import BoardSquare from "./BoardSquare";
 
 const Board = () => {
+  
   return (
     <div className="flex flex-col justify-center items-center kulami-board-background rounded-lg drop-shadow-lg">
       {[...Array(kulamiConfig.nbRow)].map((r, y) => (

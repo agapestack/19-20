@@ -58,3 +58,12 @@ export const isTileNextToAnother = (
 
   return false;
 };
+
+export const isLastTile = (nbTile: number) => {
+    return nbTile === kulamiConfig.nbTotalTiles;
+}
+
+export const isFirstMove = (nbRed: number, nbBlack: number) => {
+    return nbRed === nbBlack;
+}
+

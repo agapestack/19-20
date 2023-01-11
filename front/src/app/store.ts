@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import kulamiReducers from "../features/Kulami/KulamiSlice";
 import globalReducers from "../features/Global/GlobalSlice";
+import quantikReducers from "../features/Quantik/QuantikSlice";
 
 export const store = configureStore({
   reducer: {
     kulami: kulamiReducers,
     global: globalReducers,
+    quantik: quantikReducers,
   },
 });
 

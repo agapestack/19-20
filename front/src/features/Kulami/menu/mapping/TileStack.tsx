@@ -1,12 +1,10 @@
-import React from "react";
-import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
+import { useAppSelector } from "../../../../app/hooks";
 import { TileDataInterface } from "../../../../config/kulami.config";
-import { extractTileSize } from "../../../../utils/kulami.utils";
 import { generateRandomString } from "../../../../utils/utils";
+import { selectKulami } from "../../KulamiSlice";
 
 const TileStack = () => {
-  const kulami = useAppSelector((state) => state.kulami);
-  const dispatch = useAppDispatch();
+  const kulami = useAppSelector(selectKulami);
 
   return (
     <div className="flex flex-col">

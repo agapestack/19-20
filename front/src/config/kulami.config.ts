@@ -1,12 +1,17 @@
 //  _____________________KULAMI GLOBAL CONFIG_____________________
 
+import { NumberLiteralType } from "typescript";
+
 export const BOARD_EMPTY_VALUE = -1;
+export const SQUARE_PLAYED_VALUE = 1;
+export const RED = 1;
+export const BLACK = 2;
 
 export const kulamiConfig = {
   nbColumn: 10,
   nbRow: 10,
-  nbRedPawn: 28,
-  nbBlackPawn: 28,
+  nbTotalRedPawn: 28,
+  nbTotalBlackPawn: 28,
   nbTotalTiles: 17,
   nbTile_2box: 4,
   nbTile_3box: 4,
@@ -34,6 +39,12 @@ export interface TileDataInterface {
   posList: number[][];
 }
 
+export interface PositionDataInterface {
+    posX: number;
+    posY: number;
+    player: number;
+}
+
 export type KULAMI_MENU = "MENU_MAPPING" | "MENU_PLAY";
 
 export const kulamiMenuObject = {
@@ -49,4 +60,21 @@ export interface KulamiStateInterface {
   tileStack: TileDataInterface[];
   // nbTile === tileStack.length (explicit)
   nbTile: number;
+  
+  // PLAY MODE
+  player: number;
+  nbRedPawn: number;
+  nbBlackPawn: number;
+  status: GAME_STATUS;
+  boardPawnArray: number[][];
+  placedTile: TileType | null;
+  positionStack: PositionDataInterface[];
 }
+
+export type GAME_STATUS = "IN_PROGRESS" | "RED_WINS" | "BLACK_WINS";
+
+export const gameStatusObject = {
+  IN_PROGRESS: "IN_PROGRESS" as GAME_STATUS,
+  RED_WINS: "RED_WINS" as GAME_STATUS,
+  BLACK_WINS: "BLACK_WINS" as GAME_STATUS,
+};

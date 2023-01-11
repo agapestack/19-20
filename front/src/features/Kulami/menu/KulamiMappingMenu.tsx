@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
+
+// Material UI
 import { Button } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import SettingsIcon from "@mui/icons-material/Settings";
 import HomeIcon from "@mui/icons-material/Home";
+
 import { useAppSelector, useAppDispatch } from "../../../app/hooks";
-import { selectTile, turnTile } from "../KulamiSlice";
+import { selectTile, startGame, turnTile } from "../KulamiSlice";
 import SelectedTile from "./mapping/SelectedTile";
 import { extractTileSize } from "../../../utils/kulami.utils";
 import TileStack from "./mapping/TileStack";
 import { tileColorArray } from "../../../utils/utils";
 import { Link } from "react-router-dom";
+
 
 const KulamiMappingMenu = () => {
   const [nextTileColor, setNextTileColor] = useState<string>("");
@@ -30,11 +33,6 @@ const KulamiMappingMenu = () => {
               <HomeIcon></HomeIcon>
               <span>Homepage</span>
             </Link>
-          </Button>
-
-          <Button>
-            <SettingsIcon></SettingsIcon>
-            <span className="mx-2">Settings </span>
           </Button>
         </div>
 
@@ -94,11 +92,11 @@ const KulamiMappingMenu = () => {
       </div>
 
       <div className="flex flex-col justify-center items-center">
-        <div className="my-4">
-          <TileStack></TileStack>
+        <div className="my-4 h-80">
+            <TileStack></TileStack>
         </div>
-        <div className="">
-          <Button variant="contained">Start Game!</Button>
+        <div className="mt-20">
+          <Button variant="contained" onClick={() => dispatch(startGame())}>Start Game!</Button>
         </div>
       </div>
       

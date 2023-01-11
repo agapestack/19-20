@@ -7,12 +7,15 @@ import {
   TileDataInterface,
   BOARD_EMPTY_VALUE,
   kulamiMenuObject,
+  RED,
+  BLACK,
+  gameStatusObject,
+  PositionDataInterface,
 } from "../../config/kulami.config";
 import type { RootState } from "../../app/store";
-import { extractTileSize, isTileNextToAnother } from "../../utils/kulami.utils";
+import { extractTileSize, isFirstMove, isLastTile, isTileNextToAnother } from "../../utils/kulami.utils";
 import { toast } from "react-toastify";
-import { generateInitBoardArray } from "../../utils/board.utils";
-import { tileColorArray } from "../../utils/utils";
+import { generateInitBoardArray, tileColorArray } from "../../utils/utils";
 
 // ACTION TYPE
 export interface PlaceTileActionType {
@@ -24,6 +27,14 @@ export interface SelectTileActionType {
   tileType: TileType;
 }
 
+export interface PlacePawnActionType {
+  posX: number;
+  posY: number;
+  // prevPosX: number;
+  // prevPosY: number;
+  // prevNbTile: number;
+}
+
 const initialState: KulamiStateInterface = {
   menu: kulamiMenuObject.MENU_MAPPING,
   boardTileArray: generateInitBoardArray(
@@ -33,6 +44,18 @@ const initialState: KulamiStateInterface = {
   nbTile: 0,
   selectedTile: null,
   tileStack: [],
+
+  // PLAY
+  player: RED,
+  nbRedPawn: kulamiConfig.nbTotalRedPawn,
+  nbBlackPawn: kulamiConfig.nbTotalBlackPawn,
+  status: gameStatusObject.IN_PROGRESS,
+  boardPawnArray: generateInitBoardArray(
+    kulamiConfig.nbRow,
+    kulamiConfig.nbColumn
+  ),
+  placedTile: null,
+  positionStack: [],
 };
 
 export const kulamiSlice = createSlice({
@@ -45,6 +68,12 @@ export const kulamiSlice = createSlice({
 
         const size = extractTileSize(state.selectedTile);
         const [width, height] = size;
+
+        // verify that the number of tiles has reached the maximum
+        if (state.nbTile === 17) {
+          toast.error("You reache the maximum number of tiles");
+          return;
+        }
 
         // verify that piece fit the board
         if (
@@ -109,11 +138,85 @@ export const kulamiSlice = createSlice({
       }
     },
     removeLastTile: (state) => {},
+    startGame: (state) => {
+      if (isLastTile(state.nbTile)) {
+        toast.success("Game start!");
+        state.menu = kulamiMenuObject.MENU_PLAY;
+      } else {
+        toast.error("You haven't placed all the tile");
+      }
+    },
+    placePawn: (state, action: PayloadAction<PlacePawnActionType>) => {
+      const { posX, posY } = action.payload;
+      // let prevPosX = state.positionStack[0].posX;
+      // let prevPosY = state.positionStack[0].posY;
+
+      // verify that can't play outside of the field
+      if (state.boardTileArray[posX][posY] === BOARD_EMPTY_VALUE) {
+        toast.error("You can't play outside of the game field !");
+        return;
+      }
+      if (!isFirstMove(state.nbRedPawn, state.nbBlackPawn)) {
+        // verify that the square is available
+        if (state.boardPawnArray[posX][posY] !== BOARD_EMPTY_VALUE) {
+          toast.error("There is already a piece here !");
+          return;
+        }
+
+        // verify that can only play relative to the last position played
+        if (
+          posX !== state.positionStack[0].posX &&
+          posY !== state.positionStack[0].posY
+        ) {
+          toast.error("You can only play in highlighted area !");
+          return;
+        }
+
+        // verify that can't play in the same tile
+        if (
+          state.boardTileArray[posX][posY] ===
+          state.boardTileArray[state.positionStack[0].posX][
+            state.positionStack[0].posY
+          ]
+        ) {
+          toast.error("You can't play in the same tile !");
+          return;
+        }
+      }
+      switch (state.player) {
+        case RED:
+          state.boardPawnArray[posX][posY] = RED;
+          state.nbRedPawn--;
+          break;
+        case BLACK:
+          state.boardPawnArray[posX][posY] = BLACK;
+          state.nbBlackPawn--;
+          break;
+        default:
+      }
+
+      // Add position to history log
+      let positionObject: PositionDataInterface = {
+        posX: posX,
+        posY: posY,
+        player: state.player,
+      };
+
+      state.positionStack.unshift(positionObject);
+
+      toast.success("Pawn successfully placed");
+    },
   },
 });
 
-export const { placeTile, selectTile, turnTile, removeLastTile } =
-  kulamiSlice.actions;
+export const {
+  placeTile,
+  selectTile,
+  turnTile,
+  removeLastTile,
+  startGame,
+  placePawn,
+} = kulamiSlice.actions;
 export const selectKulami = (state: RootState) => state.kulami;
 
 export default kulamiSlice.reducer;
