@@ -1,8 +1,17 @@
 export const IS_DEV = false;
+export const BASE_URL = "http://localhost:3000"
 
 // ________________________NETWORK CONFIG_____________________________
 export const serverAddr: string = "http://localhost:7777";
 export const socketAddr: string = "ws://localhost:7777";
+
+
+// ________________________CHAT CONFIG_____________________________
+export interface ChatMessage {
+  action: string
+  me: boolean
+  message: string
+}
 
 // ________________________GAME CONFIG_____________________________
 export type GAME_NAME = "KULAMI" | "QUANTIK" | "";

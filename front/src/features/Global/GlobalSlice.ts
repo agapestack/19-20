@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import {
+  ChatMessage,
   GameDetail,
 } from "../../config/global.config";
 
@@ -9,6 +10,7 @@ export interface GlobalStateInterface {
   gameChoice: number;
   username: string;
   roomID: string;
+  chat: ChatMessage[];
 }
 
 
@@ -16,6 +18,7 @@ const initialState: GlobalStateInterface = {
   gameChoice: 0,
   username: "",
   roomID: "",
+  chat: [],
 };
 
 export const globalSlice = createSlice({
@@ -37,11 +40,17 @@ export const globalSlice = createSlice({
     }, 
     setRoomId: (state, action: PayloadAction<string>) => {
       state.roomID = action.payload;
+    },
+    addMessage: (state, action: PayloadAction<ChatMessage>) => {
+      if(state.chat.length >= 10) {
+        state.chat.pop()
+      }
+      state.chat.push(action.payload)
     }
   },
 });
 
-export const {incrementGameChoice, decrementGameChoice, updateUsername, setRoomId} = globalSlice.actions;
+export const {incrementGameChoice, decrementGameChoice, updateUsername, setRoomId, addMessage} = globalSlice.actions;
 export const selectGlobal = (state: RootState) => state.global;
 
 export default globalSlice.reducer;

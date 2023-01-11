@@ -9,9 +9,6 @@ import (
 func InitRouter() *mux.Router {
 	r := mux.NewRouter()
 
-	// init room map
-	handler.Rooms.Init()
-
 	r.Use(middleware.Session)
 
 	r.HandleFunc("/create", handler.CreateRoom)

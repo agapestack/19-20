@@ -1,8 +1,9 @@
-import { Button, TextField, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { WsContext } from "../../../context/WebsocketContext";
+import Chat from "../Chat";
 import { setRoomId } from "../GlobalSlice";
 
 const Lobby = () => {
@@ -23,14 +24,15 @@ const Lobby = () => {
   }, []);
 
   return (
-    <div className="flex items-center justify-center w-screen h-screen overflow-hidden lobby-background">
+    <div className="grid grid-cols-12 grid-rows-4 w-screen h-screen overflow-hidden lobby-background">
+      <div className="col-span-3 row-span-1"></div>
     
-      <div className="bg-white rounded-lg p-8 m-8 flex flex-col w-96">
+      <div className="col-span-6 row-span-2 w-full h-full bg-white rounded-lg p-8 m-8">
         <Button href="/">Home</Button>
         <div className="grid grid-cols-2">
           {/* parameter */}
           <div className="flex">
-            <Typography>Parameters</Typography>
+            <Chat></Chat>
           </div>
 
           {/* players */}
@@ -51,6 +53,8 @@ const Lobby = () => {
           </div>
         </div>
       </div>
+
+      <div className="col-span-3 row-span-1"></div>
     </div>
   );
 };

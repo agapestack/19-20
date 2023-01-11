@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 
@@ -8,89 +9,74 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// handler storage
+var Rooms RoomMap
+var Players PlayerMap
+var Mutex sync.Mutex
+var wsChan = make(chan WsPayload)
+
 // types
-type RoomMap struct {
-	Mutex sync.RWMutex
-	Map   map[string][]*websocket.Conn
+type RoomMap map[string][]*websocket.Conn
+type PlayerMap map[*websocket.Conn]string
+
+// Utilitaries
+func Init() {
+	Rooms = make(map[string][]*websocket.Conn)
+	Players = make(map[*websocket.Conn]string)
 }
 
-type PlayerMap struct {
-	Mutex sync.RWMutex
-	Map   map[*websocket.Conn]string
-}
-
-// room utilities
-func (r *RoomMap) Init() {
-	r.Map = make(map[string][]*websocket.Conn)
-}
-
-func (r *RoomMap) Get(roomID string) []*websocket.Conn {
-	r.Mutex.RLock()
-	defer r.Mutex.RUnlock()
-
-	return r.Map[roomID]
-}
-
-func (r *RoomMap) CreateRoom() string {
-	r.Mutex.Lock()
-	defer r.Mutex.Unlock()
+func createRoom() string {
+	Mutex.Lock()
+	defer Mutex.Unlock()
 
 	roomID := uuid.New().String()
-	r.Map[roomID] = make([]*websocket.Conn, 0)
+	Rooms[roomID] = make([]*websocket.Conn, 0)
+	fmt.Println(roomID)
 
 	return roomID
 }
 
 // todo: check if room already full
-func (r *RoomMap) JoinRoom(roomID string, conn *websocket.Conn) {
-	r.Mutex.Lock()
-	defer r.Mutex.Unlock()
+func joinRoom(roomID string, conn *websocket.Conn) error {
+	Mutex.Lock()
+	defer Mutex.Unlock()
 
-	Players.Mutex.Lock()
-	Players.Map[conn] = roomID
-	Players.Mutex.Unlock()
-
-	r.Map[roomID] = append(r.Map[roomID], conn)
-
-	fmt.Println("Room: ")
-	for key, value := range r.Map {
-		fmt.Println(key, ": ", value)
+	// if room not found return error
+	_, ok := Rooms[roomID]
+	if !ok {
+		return errors.New("room not found")
 	}
+
+	if len(Rooms[roomID]) >= 2 {
+		return errors.New("room already full")
+	}
+
+	// add connection to player map
+	Players[conn] = roomID
+	// add conn to room slice
+	Rooms[roomID] = append(Rooms[roomID], conn)
+	return nil
 }
 
-func (r *RoomMap) QuitRoom(roomID string, conn *websocket.Conn) {
-	r.Mutex.Lock()
-	defer r.Mutex.Unlock()
+func quitRoom(conn *websocket.Conn) error {
 
-	if _, ok := Rooms.Map[roomID]; !ok {
-		return
+	roomID, ok := Players[conn]
+	if !ok {
+		return errors.New("failed to find player's room")
 	}
 
-	room := Rooms.Map[roomID]
-	for i := 0; i < len(room); i++ {
-		if room[i] == conn {
-			removeFromSlice(room, i)
-			break
-		}
+	_, ok = Rooms[roomID]
+	if !ok {
+		return errors.New("failed to retrieve room from roomID")
 	}
 
-	if len(room) == 0 {
-		Rooms.deleteRoom(roomID)
-	}
+	// remove room from rooms map
+	broadcastToRoom(WsJsonResponse{Action: "quit", Message: "user left"}, conn)
 
-	Players.Mutex.Lock()
-	delete(Players.Map, conn)
-	Players.Mutex.Unlock()
-}
-
-func (r *RoomMap) deleteRoom(roomID string) {
-	r.Mutex.Lock()
-	defer r.Mutex.Unlock()
-
-	delete(r.Map, roomID)
-}
-
-func removeFromSlice(s []*websocket.Conn, i int) []*websocket.Conn {
-	s[i] = s[len(s)-1]
-	return s[:len(s)-1]
+	Mutex.Lock()
+	delete(Rooms, roomID)
+	// remove player from players map
+	delete(Players, conn)
+	Mutex.Unlock()
+	return nil
 }

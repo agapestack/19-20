@@ -11,11 +11,6 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// lobby/websocket
-var Rooms RoomMap
-var Players PlayerMap
-var wsChan = make(chan WsPayload)
-
 type WsJsonResponse struct {
 	Action  string `json:"action"`
 	Message string `json:"message"`
@@ -29,29 +24,35 @@ type WsPayload struct {
 }
 
 func CreateRoom(w http.ResponseWriter, r *http.Request) {
-	roomID := Rooms.CreateRoom()
+	w.Header().Set("Content-Type", "application/json")
+	roomID := createRoom()
 	json.NewEncoder(w).Encode(WsJsonResponse{Action: "create", Message: roomID})
 }
 
 func JoinRoom(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("JOIN")
 	vars := mux.Vars(r)
 	roomID := vars["roomID"]
 
 	if roomID == "" {
-		json.NewEncoder(w).Encode(WsJsonResponse{Action: "error", Message: "roomID not provided"})
+		return
 	}
 
-	_, ok := Rooms.Map[roomID]
+	_, ok := Rooms[roomID]
 	if !ok {
-		json.NewEncoder(w).Encode(WsJsonResponse{Action: "error", Message: "room not found"})
+		return
+	}
+
+	if len(Rooms[roomID]) >= 2 {
+		return
 	}
 
 	conn, err := config.Upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Fatal("Web Socket Upgrade Error", err)
+		fmt.Println("failed to upgrade connection")
+		return
 	}
-	Rooms.JoinRoom(roomID, conn)
+
+	joinRoom(roomID, conn)
 
 	go listenWs(conn)
 }
@@ -76,7 +77,6 @@ func listenWs(conn *websocket.Conn) {
 			wsChan <- payload
 		}
 	}
-
 }
 
 func ListenWsChannel() {
@@ -85,21 +85,28 @@ func ListenWsChannel() {
 	for {
 		e := <-wsChan
 
+		fmt.Println(e.Action)
 		fmt.Println(e.Message)
 
-		// switch e.Action {
-
-		// }
+		switch e.Action {
+		case "quit":
+			quitRoom(e.Conn)
+		case "message":
+			broadcastToRoom(WsJsonResponse{Action: "message", Message: e.Message}, e.Conn)
+		}
 	}
 }
 
 func broadcastToRoom(response WsJsonResponse, conn *websocket.Conn) {
-	roomId, ok := Players.Map[conn]
+	Mutex.Lock()
+	defer Mutex.Unlock()
+
+	roomId, ok := Players[conn]
 	if !ok {
 		return
 	}
 
-	room, ok := Rooms.Map[roomId]
+	room, ok := Rooms[roomId]
 	if !ok {
 		return
 	}

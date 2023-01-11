@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/agapestack/19-20/back/internal/config"
-	handler "github.com/agapestack/19-20/back/internal/handlers"
+	"github.com/agapestack/19-20/back/internal/handler"
 	"github.com/agapestack/19-20/back/internal/router"
 	"github.com/gorilla/handlers"
 	"github.com/joho/godotenv"
@@ -20,6 +20,7 @@ func main() {
 	}
 	config.Init()
 
+	handler.Init()
 	go handler.ListenWsChannel()
 
 	router := router.InitRouter()
