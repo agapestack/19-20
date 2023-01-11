@@ -1,6 +1,7 @@
 import HomePage from "./features/Global/HomePage";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import GameSelection from "./features/Global/game/GameSelection";
 import GameLobby from "./features/Global/game/GameLobby";
 import Kulami from "./features/Kulami/Kulami";

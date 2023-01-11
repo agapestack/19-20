@@ -1,4 +1,4 @@
-import { Paper, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 import React, { useContext, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { ChatMessage } from "../../config/global.config";
