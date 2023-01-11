@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@rollup/plugin-node-resolve": "^15.0.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.26"
+  }
+}

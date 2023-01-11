@@ -2,6 +2,8 @@ import {
   BOARD_EMPTY_VALUE,
   kulamiConfig,
   TileType,
+  RED,
+  BLACK
 } from "../config/kulami.config";
 
 // Get [width,height] from selectedTile (kulami state)
@@ -19,8 +21,9 @@ export const isTileNextToAnother = (
 ) => {
   // top
   if (posY - 1 >= 0) {
+    // if (width === 1) {
+    // };
     for (let i = 0; i < width; i++) {
-      // console.log(posX + i, posY - 1);
       if (board[posX + i][posY - 1] !== BOARD_EMPTY_VALUE) {
         return true;
       }
@@ -67,3 +70,21 @@ export const isFirstMove = (nbRed: number, nbBlack: number) => {
     return nbRed === nbBlack;
 }
 
+export const winTile = (boardTile: number[][], boardPawn: number[][], tileInd: number): number => {
+
+  var cptRed = 0;
+  var cptBlack = 0;
+
+  for (let i = 0; i < kulamiConfig.nbRow; i++) {
+    for (let j = 0; j < kulamiConfig.nbColumn; j++) {
+      if (boardTile[i][j] === tileInd) {
+        (boardPawn[i][j] === RED) ? cptRed++ : cptBlack++;
+      }
+    }
+  }
+
+  if (cptRed < cptBlack) return BLACK;
+  if (cptRed > cptBlack) return RED
+
+  return 0;
+}

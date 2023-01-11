@@ -8,7 +8,7 @@ const HistoryLog = () => {
   const kulami = useAppSelector(selectKulami);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col h-80 overflow-auto">
         <div>
             {kulami.positionStack.map((e: PositionDataInterface, i: number) => (
                 <div id={String(i) + generateRandomString(5)}>

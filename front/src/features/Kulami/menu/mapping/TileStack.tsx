@@ -11,7 +11,7 @@ const TileStack = () => {
       <div className="">
         {kulami.tileStack.map((e: TileDataInterface, i: number) => (
           <div id={String(i) + generateRandomString(5)}>
-            {e.tileType}
+            Tile {e.tileType} placed at {e.tilePos}
           </div>
         ))}
       </div>

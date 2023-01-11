@@ -4,7 +4,7 @@ import { placeTile, placePawn } from "../KulamiSlice";
 import { IS_DEV } from "../../../config/global.config";
 import { tileColorArray } from "../../../utils/utils";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { BOARD_EMPTY_VALUE, kulamiMenuObject } from "../../../config/kulami.config";
+import { BOARD_EMPTY_VALUE, kulamiMenuObject, RED} from "../../../config/kulami.config";
 import { selectKulami } from "../KulamiSlice";
 
 export interface BoardSquareProps {
@@ -19,6 +19,18 @@ const BoardSquare = ({ x, y }: BoardSquareProps) => {
   const kulami = useAppSelector(selectKulami);
   const dispatch = useAppDispatch();
   const boardSquareRef = useRef<HTMLDivElement>(null);
+
+  var highlighted = '';
+  if (kulami.positionStack.length >= 1) {
+    if ((kulami.positionStack[0].posX === x || kulami.positionStack[0].posY === y) && (kulami.boardTileArray[x][y] !== BOARD_EMPTY_VALUE)) {
+      highlighted = "kulami-highlight";
+    }
+  }
+
+//   var imgSrc = '';
+//   if (kulami.boardPawnArray[x][y] !== BOARD_EMPTY_VALUE) {
+//     imgSrc = (kulami.player === RED) ? "bg-[url('process.env.PUBLIC_URL + '/kulami/kulami_marbleRed.png'')]" : "bg-[url('process.env.PUBLIC_URL + '/kulami/kulami_marbleBlack.png'')]";
+//   }
 
   function handleClick(): void{
     if(kulami.menu === kulamiMenuObject.MENU_MAPPING){
@@ -47,7 +59,6 @@ const BoardSquare = ({ x, y }: BoardSquareProps) => {
     if (boardSquareRef.current) {
       boardSquareRef.current.style.background = squareColor;
       if (tileIndex !== BOARD_EMPTY_VALUE) {
-        // console.log(boardSquareRef.current.style);
         boardSquareRef.current.style.borderColor = "transparent";
         setIsTileOnSquare(true);
       }
@@ -59,8 +70,8 @@ const BoardSquare = ({ x, y }: BoardSquareProps) => {
     const pos = kulami.boardPawnArray[x][y];
     if (boardSquareRef.current) {
       if (pos !== BOARD_EMPTY_VALUE) {
-        boardSquareRef.current.style.borderColor = "black";
-        boardSquareRef.current.style.borderWidth = "3px";
+        boardSquareRef.current.style.borderColor = "red";
+        boardSquareRef.current.style.borderWidth = "5px";
         setIsMarbleOnSquare(true);
       }
     }
@@ -68,7 +79,7 @@ const BoardSquare = ({ x, y }: BoardSquareProps) => {
 
   return (
     <div
-      className="h-20 w-20 border-black border-1 flex justify-center items-center"
+    className={`h-20 w-20 border-black border-1 flex justify-center items-center ${highlighted}`}
       ref={boardSquareRef}
       id={`(${x}, ${y})`}
       onClick={handleClick}

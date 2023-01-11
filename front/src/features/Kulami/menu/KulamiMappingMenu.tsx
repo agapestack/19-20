@@ -58,13 +58,15 @@ const KulamiMappingMenu = () => {
 
             <div className="flex justify-center items-center">
               {" "}
-              <Button onClick={() => dispatch(selectTile("2-2"))}>
+              { 
+                <Button onClick={() => dispatch(selectTile("2-2"))}>
                 <div className="grid grid-cols-2 grid-rows-2 border-1 hover:scale-110 ease-in-out duration-300">
                   {[...Array(4)].map((_) => (
                     <div className="w-4 h-4 border-1 border-black"></div>
                   ))}
                 </div>
               </Button>
+              }
               <Button onClick={() => dispatch(selectTile("3-1"))}>
                 <div className="grid grid-cols-3 grid-rows-1 border-1 hover:scale-110 ease-in-out duration-300">
                   {[...Array(3)].map((_) => (

@@ -4,6 +4,7 @@ import { NumberLiteralType } from "typescript";
 
 export const BOARD_EMPTY_VALUE = -1;
 export const SQUARE_PLAYED_VALUE = 1;
+
 export const RED = 1;
 export const BLACK = 2;
 
@@ -23,6 +24,7 @@ export const kulamiConfig = {
 export type TileType = "2-2" | "3-1" | "1-3" | "2-3" | "3-2" | "1-2" | "2-1";
 
 export const tileTypes = {
+  tile_1x2: "1-2" as TileType,
   tile_2x2: "2-2" as TileType,
   tile_3x1: "3-1" as TileType,
   tile_1x3: "1-3" as TileType,
@@ -35,6 +37,7 @@ export const tileTypes = {
 
 export interface TileDataInterface {
   tileType: TileType;
+  tilePos: string;
   color: string;
   posList: number[][];
 }
@@ -50,16 +53,20 @@ export type KULAMI_MENU = "MENU_MAPPING" | "MENU_PLAY";
 export const kulamiMenuObject = {
   MENU_MAPPING: "MENU_MAPPING" as KULAMI_MENU,
   MENU_PLAY: "MENU_PLAY" as KULAMI_MENU,
+
 };
 
 export interface KulamiStateInterface {
+  // MAPPING
   menu: KULAMI_MENU;
   boardTileArray: number[][];
-
   selectedTile: TileType | null;
   tileStack: TileDataInterface[];
-  // nbTile === tileStack.length (explicit)
   nbTile: number;
+  nbTile2Toltal: number;
+  nbTile3Toltal: number;
+  nbTile4Toltal: number;
+  nbTile6Toltal: number;
   
   // PLAY MODE
   player: number;
@@ -69,6 +76,8 @@ export interface KulamiStateInterface {
   boardPawnArray: number[][];
   placedTile: TileType | null;
   positionStack: PositionDataInterface[];
+  redScore: number;
+  blackScore: number;
 }
 
 export type GAME_STATUS = "IN_PROGRESS" | "RED_WINS" | "BLACK_WINS";
