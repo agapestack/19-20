@@ -19,7 +19,7 @@ install-dev: ## install dev tools
 
 ## run
 run-back: ## run server
-	go run back/cmd/*.go
+	cd back; go run cmd/*.go
 
 run-front: ## run react client
 	cd front; npm run start

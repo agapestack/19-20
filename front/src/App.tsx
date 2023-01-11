@@ -1,21 +1,19 @@
 import React from "react";
-import Game from "./features/Global/Game";
+import Game from "./features/Global/game/Game";
 import HomePage from "./features/Global/HomePage";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { gameTypeObject } from "./config/global.config";
 import { ToastContainer } from "react-toastify";
-import GameMenu from "./features/Global/gameMenu/GameMenu";
-import Lobby from "./features/Global/gameMenu/Lobby";
+import GameSelection from "./features/Global/game/GameSelection";
+import GameLobby from "./features/Global/game/GameLobby";
+import { gameStateObject } from "./config/global.config";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage></HomePage>} />
-        <Route path="/game/menu" element={<GameMenu></GameMenu>} />
-        <Route path="/game/:roomID" element={<Lobby></Lobby>} />
-        <Route path="/kulami" element={<Game gameName={gameTypeObject.kulami} />} />
-        <Route path="/kulami" element={<Game gameName={gameTypeObject.quantik} />} /> 
+        <Route path="/game" element={<GameSelection></GameSelection>} />
+        <Route path="/game/:roomID" element={<GameLobby></GameLobby>} />
       </Routes>
 
       <ToastContainer

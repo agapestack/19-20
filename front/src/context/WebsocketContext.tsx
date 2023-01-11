@@ -6,7 +6,7 @@ import { addMessage, setRoomId } from "../features/Global/GlobalSlice";
 interface WsContextInterface {
   createRoom: () => void;
   joinRoom: (roomId: string) => void;
-  send: (message: WsPayload) => void,
+  send: (message: WsPayload) => void;
 }
 const defaultState: WsContextInterface = {
   createRoom: () => {},

@@ -16,15 +16,26 @@ const Chat = () => {
       let msg: ChatMessage = { action: "message", message: text, me: true };
       wsContext.send(msg);
       dispatch(addMessage(msg));
+      setText("");
     }
   };
 
+  const generateMessageCssClass = (isMe: boolean): string => {
+    let result = "chat-bubble"
+    if(isMe) {
+      result += " chat-me"
+    } else {
+      result += " chat-opponent"
+    }
+    return result
+  }
+
   return (
-    <div className="h-full w-full flex justify-between flex-col items-center">
-      <div className="">
+    <div className="h-full w-full flex justify-between flex-col items-center mx-8 border">
+      <div className="float w-full h-full">
         {global.chat.map((msg, index) => (
-          <div className="message-wrapper" key={index}>
-            <div className={msg.me ? "chat-bubble right" : "chat-bubble left"}>
+          <div className="chat-message" key={index}>
+            <div className={generateMessageCssClass(msg.me)}>
               {msg.message}
             </div>
           </div>

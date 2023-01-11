@@ -1,29 +1,28 @@
 export const IS_DEV = false;
-export const BASE_URL = "http://localhost:3000"
+export const BASE_URL = "http://localhost:3000";
 
 // ________________________NETWORK CONFIG_____________________________
 export const serverAddr: string = "http://localhost:7777";
 export const socketAddr: string = "ws://localhost:7777";
 
-
 // ________________________CHAT CONFIG_____________________________
 export interface ChatMessage {
-  action: string
-  me: boolean
-  message: string
+  action: string;
+  me: boolean;
+  message: string;
 }
 
 // ________________________GAME CONFIG_____________________________
-export type GAME_NAME = "KULAMI" | "QUANTIK" | "";
-export type MENU_TYPE = "MAPPING" | "PLAY" | "";
+export type GAME_STATE = "KULAMI" | "QUANTIK";
+export type KULAMI_STATE = "MAPPING" | "PLAY" | "";
 
-export const gameTypeObject = {
-  kulami: "KULAMI" as GAME_NAME,
-  quantik: "QUANTIK" as GAME_NAME,
+export const gameStateObject = {
+  kulami: "KULAMI" as GAME_STATE,
+  quantik: "QUANTIK" as GAME_STATE,
 };
 
 interface GameDetailType {
-  gameName: GAME_NAME;
+  gameName: GAME_STATE;
   imgPath: string;
   logoPath: string;
   gameDescription: string;
@@ -31,14 +30,14 @@ interface GameDetailType {
 
 export const GameDetail: GameDetailType[] = [
   {
-    gameName: gameTypeObject.kulami,
+    gameName: gameStateObject.kulami,
     imgPath: "/assets/kulami_img.jpg",
     logoPath: "/assets/KulamiLogo.png",
     gameDescription:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores alias rem eius quo voluptatibus sapiente quas voluptatum dignissimos, veritatis et iste odit aut, laboriosam neque quis modi illo. Dicta, esse.",
+      "Assemblez les tuiles pour créer un plateau différent à chaque partie. Les joueurs, à leur tour, placent une bille pour tenter de contrôler chacune des tuiles. Soyez rusés et limitez les prochains coups de votre adversaire afin de vous assurer une brillante victoire.",
   },
   {
-    gameName: gameTypeObject.quantik,
+    gameName: gameStateObject.quantik,
     imgPath: "/assets/quantik_img.jpg",
     logoPath: "/assets/QuantikLogo.png",
     gameDescription:
