@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
 import CircleIcon from "@mui/icons-material/Circle";
-import { placeTile, placePawn } from "../KulamiSlice";
-import { IS_DEV } from "../../../config/global.config";
-import { tileColorArray } from "../../../utils/utils";
+import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { IS_DEV } from "../../../config/global.config";
 import { BOARD_EMPTY_VALUE, kulamiMenuObject } from "../../../config/kulami.config";
-import { selectKulami } from "../KulamiSlice";
+import { tileColorArray } from "../../../utils/utils";
+import { placePawn, placeTile, selectKulami } from "../KulamiSlice";
 
 export interface BoardSquareProps {
   x: number;

@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 // Material UI
-import { Button } from "@mui/material";
-import RefreshIcon from "@mui/icons-material/Refresh";
 import HomeIcon from "@mui/icons-material/Home";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { Button } from "@mui/material";
 
-import { useAppSelector, useAppDispatch } from "../../../app/hooks";
+import { Link } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { extractTileSize } from "../../../utils/kulami.utils";
+import { tileColorArray } from "../../../utils/utils";
 import { selectTile, startGame, turnTile } from "../KulamiSlice";
 import SelectedTile from "./mapping/SelectedTile";
-import { extractTileSize } from "../../../utils/kulami.utils";
 import TileStack from "./mapping/TileStack";
-import { tileColorArray } from "../../../utils/utils";
-import { Link } from "react-router-dom";
 
 
 const KulamiMappingMenu = () => {

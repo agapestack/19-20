@@ -1,8 +1,7 @@
-import React from 'react'
 import { useAppSelector } from '../../../../app/hooks'
 import { PositionDataInterface } from '../../../../config/kulami.config'
-import { selectKulami } from '../../KulamiSlice'
 import { generateRandomString } from '../../../../utils/utils'
+import { selectKulami } from '../../KulamiSlice'
 
 const HistoryLog = () => {
   const kulami = useAppSelector(selectKulami);

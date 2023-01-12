@@ -1,16 +1,26 @@
 import React, { createContext, FC, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { BASE_URL, serverAddr, socketAddr } from "../config/global.config";
-import { addMessage, setRoomId } from "../features/Global/GlobalSlice";
+import {
+  BASE_URL,
+  PlayerType,
+  serverAddr,
+  socketAddr,
+} from "../config/global.config";
+import {
+  addMessage,
+  setRoomId,
+  setOpponent,
+  toggleOpponentHasJoin,
+} from "../features/Global/GlobalSlice";
 
 interface WsContextInterface {
   createRoom: () => void;
-  joinRoom: (roomId: string) => void;
+  joinRoom: (roomID: string, username: string, avatarID: number) => void;
   send: (message: WsPayload) => void;
 }
 const defaultState: WsContextInterface = {
   createRoom: () => {},
-  joinRoom: (roomId: string) => {},
+  joinRoom: (roomID: string, username: string, avatarID: number) => {},
   send: (message: WsPayload) => {},
 };
 export const WsContext = createContext<WsContextInterface>(defaultState);
@@ -34,10 +44,22 @@ export const WebsocketContextProvider: FC<Props> = ({ children }) => {
   };
 
   const sendMessage = (message: WsPayload) => {
-    socketRef.current?.send(JSON.stringify(message))
-  }
+    socketRef.current?.send(JSON.stringify(message));
+  };
 
-  const joinRoom = async (roomID: string) => {
+  const joinRoom = async (
+    roomID: string,
+    username: string,
+    avatarID: number
+  ) => {
+    console.log(
+      "joining room ",
+      roomID,
+      " username: ",
+      username,
+      " avatarID: ",
+      avatarID
+    );
     window.onbeforeunload = function () {
       console.log("Leaving");
       let jsonData: WsPayload = {
@@ -50,15 +72,14 @@ export const WebsocketContextProvider: FC<Props> = ({ children }) => {
     if (socketRef.current) return;
     socketRef.current = new WebSocket(socketAddr + `/join/${roomID}`);
 
-    socketRef.current.addEventListener("error", (e) => {
-      console.log(e)
-      console.log("error captured, need to handle it!")
-      window.location.href = BASE_URL
+    socketRef.current.addEventListener("open", (e) => {
+      sendMessage({action: "join", message: JSON.stringify({roomID: roomID, username: username, avatarID: avatarID})})
     })
 
-    // onOpen
-    socketRef.current.addEventListener("open", () => {
-      console.log("socket opened");
+    socketRef.current.addEventListener("error", (e) => {
+      console.log(e);
+      console.log("error captured, need to handle it!");
+      // window.location.href = BASE_URL;
     });
 
     // onMessage
@@ -68,10 +89,21 @@ export const WebsocketContextProvider: FC<Props> = ({ children }) => {
 
       switch (message.action) {
         case "quit":
-          console.log("need to redirect")
+          console.log("need to redirect");
           break;
         case "message":
-          dispatch(addMessage({me: false, message: message.message, action: "message"}))
+          dispatch(
+            addMessage({
+              me: false,
+              message: message.message,
+              action: "message",
+            })
+          );
+          break;
+        case "join":
+          
+          dispatch(toggleOpponentHasJoin());
+          dispatch(setOpponent(JSON.parse(message.message) as PlayerType));
           break;
       }
     });

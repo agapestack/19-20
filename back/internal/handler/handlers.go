@@ -23,7 +23,7 @@ type WsPayload struct {
 	Conn    *websocket.Conn `json:"-"`
 }
 
-func CreateRoom(w http.ResponseWriter, r *http.Request) {
+func CreateRoom(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	roomID := createRoom()
 	json.NewEncoder(w).Encode(WsJsonResponse{Action: "create", Message: roomID})
@@ -32,10 +32,6 @@ func CreateRoom(w http.ResponseWriter, r *http.Request) {
 func JoinRoom(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	roomID := vars["roomID"]
-
-	if roomID == "" {
-		return
-	}
 
 	_, ok := Rooms[roomID]
 	if !ok {
@@ -52,7 +48,10 @@ func JoinRoom(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	joinRoom(roomID, conn)
+	err = joinRoom(roomID, conn)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 
 	go listenWs(conn)
 }
@@ -80,41 +79,52 @@ func listenWs(conn *websocket.Conn) {
 }
 
 func ListenWsChannel() {
+	fmt.Println("Starting ListenWsChannel")
 	// var response WsJsonResponse
 
 	for {
 		e := <-wsChan
 
-		fmt.Println(e.Action)
-		fmt.Println(e.Message)
+		fmt.Printf("Action: %s\nMessage: %s\n\n", e.Action, e.Message)
 
 		switch e.Action {
+		case "join":
+			var newPlayer PlayerInfo
+			err := json.Unmarshal([]byte(e.Message), &newPlayer)
+			if err != nil {
+				fmt.Println(err)
+				quitRoom(e.Conn)
+			}
+
+			// register players details
+			setPlayerInfo(newPlayer, e.Conn)
+			player := Players[e.Conn]
+
+			// if someone was already there share previously registered user with him
+			roomConns, ok := Rooms[player.RoomID]
+			if !ok {
+				fmt.Println("failed roomConns")
+				quitRoom(e.Conn)
+			}
+
+			broadcastToRoom(WsJsonResponse{Action: e.Action, Message: e.Message}, e.Conn)
+			if len(roomConns) == 2 {
+				var otherPlayer *PlayerInfo
+				if roomConns[0] == e.Conn {
+					otherPlayer = Players[roomConns[1]]
+				} else {
+					otherPlayer = Players[roomConns[0]]
+				}
+				otherPlayerSerialized, _ := json.Marshal(PlayerInfo{
+					Username: otherPlayer.Username,
+					AvatarID: otherPlayer.AvatarID,
+				})
+				e.Conn.WriteJSON(WsJsonResponse{Action: "join", Message: string(otherPlayerSerialized)})
+			}
 		case "quit":
 			quitRoom(e.Conn)
 		case "message":
-			broadcastToRoom(WsJsonResponse{Action: "message", Message: e.Message}, e.Conn)
+			broadcastToRoom(WsJsonResponse{Action: e.Action, Message: e.Message}, e.Conn)
 		}
 	}
-}
-
-func broadcastToRoom(response WsJsonResponse, conn *websocket.Conn) {
-	Mutex.Lock()
-	defer Mutex.Unlock()
-
-	roomId, ok := Players[conn]
-	if !ok {
-		return
-	}
-
-	room, ok := Rooms[roomId]
-	if !ok {
-		return
-	}
-
-	for _, c := range room {
-		if c != conn {
-			c.WriteJSON(response)
-		}
-	}
-
 }

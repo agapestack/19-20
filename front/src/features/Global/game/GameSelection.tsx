@@ -1,18 +1,12 @@
-import {
-  Button,
-  Card,
-  CardContent,
-  IconButton,
-  Typography,
-} from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import { Button, IconButton, Typography } from "@mui/material";
 import { useContext, useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { decrementGameChoice, incrementGameChoice } from "../GlobalSlice";
-import { GameDetail } from "../../../config/global.config";
-import { WsContext } from "../../../context/WebsocketContext";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { GameDetail, gameStateObject } from "../../../config/global.config";
+import { WsContext } from "../../../context/WebsocketContext";
+import { decrementGameChoice, incrementGameChoice } from "../GlobalSlice";
 
 const GameSelection = () => {
   const global = useAppSelector((state) => state.global);
@@ -21,8 +15,24 @@ const GameSelection = () => {
   const wsContext = useContext(WsContext);
 
   useEffect(() => {
-    navigate("/game/" + global.roomID)
-  }, [global.roomID])
+    navigate("/game/" + global.roomID);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [global.roomID]);
+
+  const handlePlayOffline = () => {
+    let choice = GameDetail[global.gameChoice].gameName;
+    switch (choice) {
+      case gameStateObject.kulami:
+        navigate("/offline/kulami");
+        break;
+      case gameStateObject.quantik:
+        navigate("/offline/quantik");
+        break;
+      default:
+        navigate("/");
+        break;
+    }
+  };
 
   return (
     <div className="flex justify-center items-center w-screen h-screen overflow-hidden background-color">
@@ -56,7 +66,7 @@ const GameSelection = () => {
           </div>
         </div>
 
-        <div className="row-span-1 flex flex-col justify-around items-center mb-4">
+        <div className="row-span-1 flex justify-around items-center mb-4">
           <div className="w-48">
             <Button
               fullWidth={true}
@@ -74,6 +84,16 @@ const GameSelection = () => {
               onClick={wsContext.createRoom}
             >
               Join a room
+            </Button>
+          </div>
+
+          <div className="w-48">
+            <Button
+              fullWidth={true}
+              variant="contained"
+              onClick={handlePlayOffline}
+            >
+              Play offline
             </Button>
           </div>
         </div>

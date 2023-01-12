@@ -3,6 +3,8 @@ import { RootState } from "../../app/store";
 import {
   ChatMessage,
   GameDetail,
+  PlayerAvatar,
+  PlayerType
 } from "../../config/global.config";
 
 export interface GlobalStateInterface {
@@ -10,42 +12,84 @@ export interface GlobalStateInterface {
   gameChoice: number;
   roomID: string;
   chat: ChatMessage[];
+  me: PlayerType;
+  opponent: PlayerType;
+  meHasJoin: boolean;
+  opponentHasJoin: boolean;
+  isMyTurn: boolean | null;
 }
-
 
 const initialState: GlobalStateInterface = {
   gameChoice: 0,
   roomID: "",
   chat: [],
+  me: { avatarID: 0, username: "" },
+  opponent: { avatarID: 0, username: "" },
+  meHasJoin: false,
+  opponentHasJoin: false,
+  isMyTurn: null,
 };
 
 export const globalSlice = createSlice({
   name: "global",
   initialState,
   reducers: {
-    incrementGameChoice: state => {
-      state.gameChoice = (state.gameChoice + 1) % GameDetail.length
+    incrementGameChoice: (state) => {
+      state.gameChoice = (state.gameChoice + 1) % GameDetail.length;
     },
-    decrementGameChoice: state => {
-      if(state.gameChoice === 0) {
+    decrementGameChoice: (state) => {
+      if (state.gameChoice === 0) {
         state.gameChoice = GameDetail.length - 1;
       } else {
         state.gameChoice -= 1;
       }
-    }, 
+    },
     setRoomId: (state, action: PayloadAction<string>) => {
       state.roomID = action.payload;
     },
     addMessage: (state, action: PayloadAction<ChatMessage>) => {
-      if(state.chat.length >= 10) {
-        state.chat.pop()
+      if (state.chat.length >= 10) {
+        state.chat.pop();
       }
-      state.chat.push(action.payload)
-    }
+      state.chat.push(action.payload);
+    },
+    setOpponent: (state, action: PayloadAction<PlayerType>) => {
+      state.opponent = action.payload;
+    },
+    incrementAvatarChoice: (state) => {
+      state.me.avatarID += 1;
+      state.me.avatarID = state.me.avatarID % PlayerAvatar.length;
+    },
+    decrementAvatarChoice: (state) => {
+      state.me.avatarID -= 1;
+      if (state.me.avatarID < 1) {
+        state.me.avatarID = PlayerAvatar.length - 1;
+      }
+    },
+    setUsername: (state, action: PayloadAction<string>) => {
+      state.me.username = action.payload;
+    },
+    toggleMeHasJoin: (state) => {
+      state.meHasJoin = !state.meHasJoin;
+    },
+    toggleOpponentHasJoin: (state) => {
+      state.opponentHasJoin = !state.opponentHasJoin;
+    },
   },
 });
 
-export const {incrementGameChoice, decrementGameChoice, setRoomId, addMessage} = globalSlice.actions;
+export const {
+  incrementGameChoice,
+  decrementGameChoice,
+  setRoomId,
+  addMessage,
+  incrementAvatarChoice,
+  decrementAvatarChoice,
+  setOpponent,
+  setUsername,
+  toggleMeHasJoin,
+  toggleOpponentHasJoin,
+} = globalSlice.actions;
 export const selectGlobal = (state: RootState) => state.global;
 
 export default globalSlice.reducer;

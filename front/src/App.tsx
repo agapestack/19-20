@@ -4,8 +4,7 @@ import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import GameSelection from "./features/Global/game/GameSelection";
 import GameLobby from "./features/Global/game/GameLobby";
-import Kulami from "./features/Kulami/Kulami";
-import Quantik from "./features/Quantik/Quantik";
+import Game from "./features/Global/game/Game";
 
 function App() {
   return (
@@ -15,8 +14,8 @@ function App() {
         <Route path="/game" element={<GameSelection></GameSelection>} />
         <Route path="/game/:roomID" element={<GameLobby></GameLobby>} />
 
-        <Route path="/kulami" element={<Kulami></Kulami>} />
-        <Route path="/quantik" element={<Quantik></Quantik>} />
+        <Route path="/offline/kulami" element={<Game gameState="KULAMI"></Game>} />
+        <Route path="/offline/quantik" element={<Game gameState="QUANTIK"></Game>} />
       </Routes>
 
       <ToastContainer

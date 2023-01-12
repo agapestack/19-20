@@ -1,20 +1,11 @@
-import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import {
-  TileType,
-  KulamiStateInterface,
-  kulamiConfig,
-  TileDataInterface,
-  BOARD_EMPTY_VALUE,
-  kulamiMenuObject,
-  RED,
-  BLACK,
-  gameStatusObject,
-  PositionDataInterface,
-} from "../../config/kulami.config";
-import type { RootState } from "../../app/store";
-import { extractTileSize, isFirstMove, isLastTile, isTileNextToAnother } from "../../utils/kulami.utils";
+import { createSlice } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
+import type { RootState } from "../../app/store";
+import {
+  BLACK, BOARD_EMPTY_VALUE, gameStatusObject, kulamiConfig, kulamiMenuObject, KulamiStateInterface, PositionDataInterface, RED, TileDataInterface, TileType
+} from "../../config/kulami.config";
+import { extractTileSize, isFirstMove, isLastTile, isTileNextToAnother } from "../../utils/kulami.utils";
 import { generateInitBoardArray, tileColorArray } from "../../utils/utils";
 
 // ACTION TYPE

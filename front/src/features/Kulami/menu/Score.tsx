@@ -1,4 +1,3 @@
-import React from 'react'
 
 const Score = () => {
   return (
@@ -6,4 +5,4 @@ const Score = () => {
   )
 }
 
-export {}
+export { }

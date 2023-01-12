@@ -1,9 +1,9 @@
 import { TextField } from "@mui/material";
-import React, { useContext, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { ChatMessage } from "../../config/global.config";
-import { WsContext } from "../../context/WebsocketContext";
-import { addMessage } from "./GlobalSlice";
+import { useContext, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { ChatMessage } from "../../../config/global.config";
+import { WsContext } from "../../../context/WebsocketContext";
+import { addMessage } from "../GlobalSlice";
 
 const Chat = () => {
   const [text, setText] = useState<string>("");
@@ -13,7 +13,11 @@ const Chat = () => {
 
   const handleKeyDown = (e: { key: string }) => {
     if (e.key === "Enter") {
-      let msg: ChatMessage = { action: "message", message: text, me: true };
+      let msg: ChatMessage = {
+        action: "message",
+        message: text,
+        me: true,
+      };
       wsContext.send(msg);
       dispatch(addMessage(msg));
       setText("");
@@ -21,23 +25,21 @@ const Chat = () => {
   };
 
   const generateMessageCssClass = (isMe: boolean): string => {
-    let result = "chat-bubble"
-    if(isMe) {
-      result += " chat-me"
+    let result = "chat-bubble";
+    if (isMe) {
+      result += " chat-me";
     } else {
-      result += " chat-opponent"
+      result += " chat-opponent";
     }
-    return result
-  }
+    return result;
+  };
 
   return (
     <div className="h-full w-full flex justify-between flex-col items-center mx-8 border">
       <div className="float w-full h-full">
         {global.chat.map((msg, index) => (
           <div className="chat-message" key={index}>
-            <div className={generateMessageCssClass(msg.me)}>
-              {msg.message}
-            </div>
+            <div className={generateMessageCssClass(msg.me)}>{msg.message}</div>
           </div>
         ))}
       </div>

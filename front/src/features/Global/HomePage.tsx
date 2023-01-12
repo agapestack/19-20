@@ -3,7 +3,7 @@ import {
   Card,
   CardContent,
   CardMedia,
-  Typography,
+  Typography
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { GameDetail } from "../../config/global.config";

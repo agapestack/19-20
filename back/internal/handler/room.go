@@ -17,12 +17,30 @@ var wsChan = make(chan WsPayload)
 
 // types
 type RoomMap map[string][]*websocket.Conn
-type PlayerMap map[*websocket.Conn]string
+type PlayerMap map[*websocket.Conn]*PlayerInfo
+
+type PlayerInfo struct {
+	RoomID   string `json:"roomID"`
+	Username string `json:"username"`
+	AvatarID int    `json:"avatarID"`
+}
+
+func setPlayerInfo(p PlayerInfo, conn *websocket.Conn) {
+	player, ok := Players[conn]
+	if !ok {
+		fmt.Println("setPlayerInfo: failed to retrieve player")
+		return
+	}
+
+	player.Username = p.Username
+	player.RoomID = p.RoomID
+	player.AvatarID = p.AvatarID
+}
 
 // Utilitaries
 func Init() {
 	Rooms = make(map[string][]*websocket.Conn)
-	Players = make(map[*websocket.Conn]string)
+	Players = make(map[*websocket.Conn]*PlayerInfo)
 }
 
 func createRoom() string {
@@ -31,7 +49,7 @@ func createRoom() string {
 
 	roomID := uuid.New().String()
 	Rooms[roomID] = make([]*websocket.Conn, 0)
-	fmt.Println(roomID)
+	fmt.Println("Room " + roomID + " sucessfully created!")
 
 	return roomID
 }
@@ -52,31 +70,83 @@ func joinRoom(roomID string, conn *websocket.Conn) error {
 	}
 
 	// add connection to player map
-	Players[conn] = roomID
+	Players[conn] = &PlayerInfo{RoomID: roomID, Username: "", AvatarID: 0}
 	// add conn to room slice
 	Rooms[roomID] = append(Rooms[roomID], conn)
+	fmt.Println("Player has joined room ", roomID, "    size: ", len(Rooms[roomID]))
 	return nil
 }
 
+// if one player quit then disconnect every player from his room and delete room
 func quitRoom(conn *websocket.Conn) error {
-
-	roomID, ok := Players[conn]
+	player, ok := Players[conn]
 	if !ok {
 		return errors.New("failed to find player's room")
 	}
 
-	_, ok = Rooms[roomID]
+	connList, ok := Rooms[player.RoomID]
 	if !ok {
 		return errors.New("failed to retrieve room from roomID")
 	}
 
-	// remove room from rooms map
 	broadcastToRoom(WsJsonResponse{Action: "quit", Message: "user left"}, conn)
 
 	Mutex.Lock()
-	delete(Rooms, roomID)
-	// remove player from players map
-	delete(Players, conn)
+	for _, p := range connList {
+		delete(Players, p)
+	}
+	fmt.Println("Deleting room " + player.RoomID)
+	delete(Rooms, player.RoomID)
 	Mutex.Unlock()
 	return nil
+}
+
+func broadcastToRoom(response WsJsonResponse, conn *websocket.Conn) {
+	Mutex.Lock()
+	defer Mutex.Unlock()
+
+	player, ok := Players[conn]
+	if !ok {
+		return
+	}
+
+	room, ok := Rooms[player.RoomID]
+	if !ok {
+		return
+	}
+
+	for _, c := range room {
+		if c != conn {
+			c.WriteJSON(response)
+		}
+	}
+
+}
+
+// _________________debuging tools___________________
+
+func showRoom(roomID string) {
+	roomConns, ok := Rooms[roomID]
+	if !ok {
+		fmt.Println("showRoom failed to retrieve rooom " + roomID)
+		return
+	}
+
+	fmt.Printf("Room %s\n", roomID)
+	for _, p := range roomConns {
+		p := Players[p]
+		p.print()
+
+	}
+	fmt.Println("")
+}
+
+func showRooms() {
+	for k, _ := range Rooms {
+		showRoom(k)
+	}
+}
+
+func (p *PlayerInfo) print() {
+	fmt.Printf("Username: %s\tAvatarID: %d\n", p.Username, p.AvatarID)
 }

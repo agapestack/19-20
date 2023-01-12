@@ -1,4 +1,3 @@
-import React from "react";
 import { useAppSelector } from "../../app/hooks";
 import { kulamiMenuObject } from "../../config/kulami.config";
 import Board from "./board/Board";
