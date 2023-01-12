@@ -7,14 +7,12 @@ const TileStack = () => {
   const kulami = useAppSelector(selectKulami);
 
   return (
-    <div className="flex flex-col">
-      <div className="">
+    <div className="flex flex-col items-center">
         {kulami.tileStack.map((e: TileDataInterface, i: number) => (
           <div id={String(i) + generateRandomString(5)}>
-            {e.tileType}
+            <p className="font-mono font-semibold">Tile {e.tileType} at {e.tilePos}</p>
           </div>
         ))}
-      </div>
     </div>
   );
 };
