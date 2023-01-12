@@ -48,12 +48,12 @@ export interface PositionDataInterface {
     player: number;
 }
 
-export type KULAMI_MENU = "MENU_MAPPING" | "MENU_PLAY";
+export type KULAMI_MENU = "MENU_MAPPING" | "MENU_PLAY" | "MENU_WINNER";
 
 export const kulamiMenuObject = {
   MENU_MAPPING: "MENU_MAPPING" as KULAMI_MENU,
   MENU_PLAY: "MENU_PLAY" as KULAMI_MENU,
-
+  MENU_WINNER: "MENU_WINNER" as KULAMI_MENU,
 };
 
 export interface KulamiStateInterface {
@@ -80,10 +80,11 @@ export interface KulamiStateInterface {
   blackScore: number;
 }
 
-export type GAME_STATUS = "IN_PROGRESS" | "RED_WINS" | "BLACK_WINS";
+export type GAME_STATUS = "IN_PROGRESS" | "END_GAME" | "RED_WINS" | "BLACK_WINS";
 
 export const gameStatusObject = {
   IN_PROGRESS: "IN_PROGRESS" as GAME_STATUS,
+  END_GAME: "END_GAME" as GAME_STATUS,
   RED_WINS: "RED_WINS" as GAME_STATUS,
   BLACK_WINS: "BLACK_WINS" as GAME_STATUS,
 };

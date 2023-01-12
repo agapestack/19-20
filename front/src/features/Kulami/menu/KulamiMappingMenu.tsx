@@ -6,7 +6,7 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import HomeIcon from "@mui/icons-material/Home";
 
 import { useAppSelector, useAppDispatch } from "../../../app/hooks";
-import { selectTile, startGame, turnTile } from "../KulamiSlice";
+import { reset, selectTile, startGame, turnTile } from "../KulamiSlice";
 import SelectedTile from "./mapping/SelectedTile";
 import { extractTileSize } from "../../../utils/kulami.utils";
 import TileStack from "./mapping/TileStack";
@@ -23,10 +23,9 @@ const KulamiMappingMenu = () => {
     const squareColor = tileColorArray[kulami.nbTile];
     setNextTileColor(squareColor);
   }, [kulami.nbTile]);
-
   return (
-    <div className="w-full h-full grid-rows-6 bg-slate-400">
-      <div className="flex flex-col justify-around items-center row-span-2">
+    <div className="w-full h-full grid-rows-6 bg-gray-200">
+      <div className="flex flex-col justify-around items-center">
         <div className="flex">
           <Button>
             <Link to="/">
@@ -36,7 +35,7 @@ const KulamiMappingMenu = () => {
           </Button>
         </div>
 
-        <div className="card h-full w-full m-4 border-2 rounded-lg ">
+        <div className="card h-full w-full mb-4 border-2 rounded-none border-y-blue-700">
           <h1 className="text-center font-bold text-lg">Tile selection</h1>
           <div className="flex justify-center items-center h-64 w-64 mx-auto">
             {kulami.selectedTile !== null && (
@@ -47,7 +46,7 @@ const KulamiMappingMenu = () => {
               ></SelectedTile>
             )}
           </div>
-
+          
           <div className="flex flex-col justify-aroundrow-span-2">
             <Button onClick={() => dispatch(turnTile())}>
               <div className="flex justify-center items-center">
@@ -56,49 +55,64 @@ const KulamiMappingMenu = () => {
               </div>
             </Button>
 
-            <div className="flex justify-center items-center">
+            <div className="flex justify-center items-center grid grid-cols-4 grid-rows-2 ">
               {" "}
-              { 
-                <Button onClick={() => dispatch(selectTile("2-2"))}>
-                <div className="grid grid-cols-2 grid-rows-2 border-1 hover:scale-110 ease-in-out duration-300">
+              <Button onClick={() => dispatch(selectTile("2-2"))}>
+                <div className="grid grid-cols-2 grid-rows-2 border-1 pl-0 hover:scale-110 ease-in-out duration-300">
                   {[...Array(4)].map((_) => (
                     <div className="w-4 h-4 border-1 border-black"></div>
                   ))}
                 </div>
               </Button>
-              }
               <Button onClick={() => dispatch(selectTile("3-1"))}>
-                <div className="grid grid-cols-3 grid-rows-1 border-1 hover:scale-110 ease-in-out duration-300">
+                <div className="grid grid-cols-3 grid-rows-1 border-1 pl-0 hover:scale-110 ease-in-out duration-300">
                   {[...Array(3)].map((_) => (
                     <div className="w-4 h-4 border-1 border-black"></div>
                   ))}
                 </div>
               </Button>
               <Button onClick={() => dispatch(selectTile("2-3"))}>
-                <div className="grid grid-cols-2 grid-rows-3 border-1 hover:scale-110 ease-in-out duration-300">
+                <div className="grid grid-cols-2 grid-rows-3 border-1 pl-0 hover:scale-110 ease-in-out duration-300">
                   {[...Array(6)].map((_) => (
                     <div className="w-4 h-4 border-1 border-black"></div>
                   ))}
                 </div>
               </Button>
               <Button onClick={() => dispatch(selectTile("1-2"))}>
-                <div className="grid grid-cols-1 grid-rows-2 border-1 hover:scale-110 ease-in-out duration-300">
+                <div className="grid grid-cols-1 grid-rows-2 border-1 pl-0 hover:scale-110 ease-in-out duration-300">
                   {[...Array(2)].map((_) => (
                     <div className="w-4 h-4 border-1 border-black"></div>
                   ))}
                 </div>
               </Button>
+              <div className="flex justify-center">
+                <p className="text-xl font-semibold bg-slate-300 px-2 rounded-md">{kulami.nbTile4Toltal}</p>
+              </div>
+              <div className="flex justify-center">
+                <p className="text-xl font-semibold bg-slate-300 px-2 rounded-md">{kulami.nbTile3Toltal}</p>
+              </div>
+              <div className="flex justify-center">
+                <p className="text-xl font-semibold bg-slate-300 px-2 rounded-md">{kulami.nbTile6Toltal}</p>
+              </div>
+              <div className="flex justify-center">
+                <p className="text-xl font-semibold bg-slate-300 px-2 rounded-md">{kulami.nbTile2Toltal}</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <div className="flex flex-col justify-center items-center">
-        <div className="my-4 h-80">
+        <div className="my-4 h-100 w-80 bg-slate-300 rounded-md">
             <TileStack></TileStack>
         </div>
-        <div className="mt-20">
-          <Button variant="contained" onClick={() => dispatch(startGame())}>Start Game!</Button>
+        <div className="flex items-center justify-center mt-3">
+          <div className="mx-4">
+            <Button variant="contained" onClick={() => dispatch(startGame())}>Start Game</Button>
+          </div>
+          <div className="mx-4">
+            <Button variant="contained" onClick={() => dispatch(reset())}>New Game</Button>
+          </div>
         </div>
       </div>
       

@@ -9,15 +9,18 @@ import {
   kulamiMenuObject,
   RED,
   BLACK,
+  // KULAMI_MENU,
   gameStatusObject,
   PositionDataInterface,
   tileTypes,
 } from "../../config/kulami.config";
 import type { RootState } from "../../app/store";
-import { extractTileSize, isFirstMove, isLastTile, isTileNextToAnother, winTile } from "../../utils/kulami.utils";
+import { extractTileSize, isLastTile, isTileNextToAnother, isMoveValid, winTile, getNbPawnAdjacent, isTileFit, isEnoughSpace } from "../../utils/kulami.utils";
 import { toast } from "react-toastify";
 import { generateInitBoardArray, tileColorArray } from "../../utils/utils";
-import { KeyboardReturnOutlined, ThermostatSharp } from "@mui/icons-material";
+import Swal from "sweetalert2";
+
+
 
 // ACTION TYPE
 export interface PlaceTileActionType {
@@ -74,8 +77,7 @@ export const kulamiSlice = createSlice({
       if (state.selectedTile !== null) {
         const { posX, posY } = action.payload;
 
-        const size = extractTileSize(state.selectedTile);
-        const [width, height] = size;
+        const [width, height] = extractTileSize(state.selectedTile);
 
         // verify that the number of tiles has reached the maximum
         if (state.nbTile === kulamiConfig.nbTotalTiles) {
@@ -83,25 +85,18 @@ export const kulamiSlice = createSlice({
           return;
         }
 
+
+
         // verify that piece fit the board
-        if (
-          posX + size[0] > kulamiConfig.nbRow ||
-          posY + size[1] > kulamiConfig.nbColumn
-        ) {
+        if (!isTileFit(posX, posY, width, height)) {
           toast.error("Tile exceed the board");
           return;
         }
 
         // verify that all necessary square are available
-        for (let i = 0; i < size[0]; i++) {
-          for (let j = 0; j < size[1]; j++) {
-            if (
-              state.boardTileArray[posX + i][posY + j] !== BOARD_EMPTY_VALUE
-            ) {
-              toast.error("No available space");
-              return;
-            }
-          }
+        if (!isEnoughSpace(state.boardTileArray, posX, posY, width, height)) {
+          toast.error("Not enough space");
+          return;
         }
 
         // verify that tile is next to another
@@ -157,14 +152,13 @@ export const kulamiSlice = createSlice({
         };
 
         // set square state && update tileObject.posList
-        for (let i = 0; i < size[0]; i++) {
-          for (let j = 0; j < size[1]; j++) {
+        for (let i = 0; i < width; i++) {
+          for (let j = 0; j < height; j++) {
             state.boardTileArray[posX + i][posY + j] = state.nbTile;
             tileObject.posList.push([posX + i, posY + j]);
           }
         }
-        console.log(JSON.stringify(state.boardTileArray));
-                
+
         // adding tileObject to tilestack
         state.tileStack.unshift(tileObject);  
         state.nbTile += 1;
@@ -197,50 +191,14 @@ export const kulamiSlice = createSlice({
     placePawn: (state, action: PayloadAction<PlacePawnActionType>) => {
       const { posX, posY } = action.payload;
 
-      // verify that can't play outside of the field
-      if (state.boardTileArray[posX][posY] === BOARD_EMPTY_VALUE) {
-        toast.error("You can't play outside of the game field !");
-        return;
-      }
-      // verify that the square is available
-      if (state.boardPawnArray[posX][posY] !== BOARD_EMPTY_VALUE) {
-        toast.error("There is already a piece here !");
-        return;
-      }
-      if (!isFirstMove(state.nbRedPawn, state.nbBlackPawn)) {
-        // verify that can't play in the same tile and the tile before
-        if (
-          state.boardTileArray[posX][posY] ===
-          state.boardTileArray[state.positionStack[0].posX][state.positionStack[0].posY]
-        ) {
-          toast.error("You can't play in this tile !");
-          return;
-        }
-
-        if (state.positionStack.length > 1) {
-          if (
-              state.boardTileArray[posX][posY] ===
-              state.boardTileArray[state.positionStack[1].posX][state.positionStack[1].posY]
-          ) {
-            toast.error("You can't play in the previous tile !");
-            return;
-          }
-      }
-
-        // verify that can only play relative to the last position played
-        if (
-          posX !== state.positionStack[0].posX &&
-          posY !== state.positionStack[0].posY
-        ) {
-          toast.error("You can only play in highlighted area !");
-          return;
-        }
-
+      if (!isMoveValid(state.boardTileArray, state.boardPawnArray, posX, posY, state.nbRedPawn, state.nbBlackPawn, state.positionStack)) { 
+        toast.error("Move invalid!");
+        return ;
       }
       switch (state.player) {
         case RED:
           if (state.nbRedPawn === 0) {
-            toast.error("Out of pawn !");
+            toast.error("Out of red pawn!");
             return;
           }
           state.boardPawnArray[posX][posY] = RED;
@@ -249,7 +207,7 @@ export const kulamiSlice = createSlice({
           break;
         case BLACK:
           if (state.nbBlackPawn === 0) {
-            toast.error("Out of pawn !");
+            toast.error("Out of black pawn!");
             return;
           }
           state.boardPawnArray[posX][posY] = BLACK;
@@ -267,47 +225,87 @@ export const kulamiSlice = createSlice({
       };
 
       state.positionStack.unshift(positionObject);
-
       toast.success("Pawn successfully placed");
     },
 
     getScore: (state) => {
-      for (let i = 0; i < state.tileStack.length; i++) {
-        var winner = winTile(state.boardTileArray, state.boardPawnArray, i);
-        if (!winner) {continue;}
+      state.status = gameStatusObject.END_GAME;
+      let stringWinner = '';
 
+      for (let i = 0; i < state.tileStack.length; i++) {
+        let winner = winTile(state.boardTileArray, state.boardPawnArray, i);
+        if (!winner) {
+          continue;
+        }
+        let point = 0;
         switch(state.tileStack[i].tileType) {
           case tileTypes.tile_1x2:
           case tileTypes.tile_2x1:
-            (winner === RED) ? state.redScore += 2 : state.blackScore += 2;
+            point = 2;
             break;
           case tileTypes.tile_3x1:
           case tileTypes.tile_1x3:
-            (winner === RED) ? state.redScore += 3 : state.blackScore += 3;
+            point = 3;
             break;
           case tileTypes.tile_2x2:
-            (winner === RED) ? state.redScore += 4 : state.blackScore += 4;
+            point = 4;
             break;
           case tileTypes.tile_2x3:
           case tileTypes.tile_3x2:
-            (winner === RED) ? state.redScore += 6 : state.blackScore += 6;
+            point = 6;
             break;
           default:
         }
+
+        if (winner === RED) {
+          stringWinner = 'Red'
+          state.redScore += point;
+        } 
+        else if (winner === BLACK) {
+          stringWinner = 'Black'
+          state.blackScore += point;
+        }
+        else { stringWinner = 'Neither player' }
+
+        alert(stringWinner + ' has won tile ' + i + ' for ' + point + ' points')
       }
+
+      //Advanced game rules level 1
+      const bonus = 5;
+      let nbRedPawnAdj = getNbPawnAdjacent(state.boardPawnArray, RED);
+      let nbBlackPawnAdj = getNbPawnAdjacent(state.boardPawnArray, BLACK);
+      console.log('nbRedAdj: ' + nbRedPawnAdj, 'nbBlackAdj: ' + nbBlackPawnAdj);
+
+      if (nbRedPawnAdj > nbBlackPawnAdj) {
+        stringWinner = 'Red';
+        state.redScore += bonus;
+      } 
+      else if (nbRedPawnAdj < nbBlackPawnAdj) {
+        stringWinner = 'Black';
+        state.blackScore += bonus;
+      }
+      alert(stringWinner + ' won ' + bonus + ' points bonus');
+      console.log('AFTER BONUS - red: ' + state.redScore, 'black: ' + state.blackScore);
     },
 
     getWinner: (state) => {
-      state.status = (state.redScore > state.blackScore) ? gameStatusObject.RED_WINS : gameStatusObject.BLACK_WINS;
-      console.log("red " + state.redScore);
-      console.log("black " + state.blackScore)
-      if (state.status === gameStatusObject.RED_WINS) {
+      if (state.redScore > state.blackScore) {
+        state.status = gameStatusObject.RED_WINS;
         toast.success("Red Wins");
         return;
       }
-      toast.success("Black Win");
+      if (state.redScore < state.blackScore) {
+        state.status = gameStatusObject.BLACK_WINS;
+        toast.success("Black Wins");
+        return;
+      }
+      toast.success("Tie");
       return;
-    }
+    },
+    // updateMenuState: (state, action: PayloadAction<KULAMI_MENU>) => {
+    //   state.menu = action.payload;
+    // },
+    reset: () => initialState,
   },
 });
 
@@ -318,7 +316,9 @@ export const {
   startGame,
   placePawn,
   getScore,
-  getWinner
+  getWinner,
+  // updateMenuState,
+  reset
 } = kulamiSlice.actions;
 export const selectKulami = (state: RootState) => state.kulami;
 
