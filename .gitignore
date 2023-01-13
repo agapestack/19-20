@@ -1,0 +1,6 @@
+/back/tmp/
+front/node_modules
+.vscode
+bin
+bin/
+tmp

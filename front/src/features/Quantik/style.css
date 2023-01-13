@@ -1,0 +1,72 @@
+.quantik-title {
+  font-size: 3em;
+  font-family: Tomorrow People;
+  line-height: 1em;
+  margin-bottom: 8px;
+  color: #544C6A;
+}
+
+@font-face {
+  font-family: Tomorrow People;
+  src: url("../../../public/assets/quantik/TomorrowPeople.ttf");
+}
+
+.quantik-cell-image {
+  width: 99%;
+  height: 99%;
+  animation-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
+  animation: appear 0.3s;
+}
+
+@keyframes appear {
+  0% {opacity: 0; scale: 0.8;}
+  100% {opacity: 1; scale:1;}
+}
+  
+.quantik-menu-shape:hover {
+  background-color: transparent !important;
+}
+
+.quantik-menu-shape img {
+  transition: all .3s;
+  transform: translateY(0);
+  transition-timing-function: ease-in-out;
+}
+
+.quantik-menu-shape:hover img {
+  transform: translateY(-10%);
+}
+  
+.quantik-menu-shape::before {
+  content: ' ';
+  background: black;
+  opacity: 0.4;
+  position: absolute;
+  top: 100%;
+  left: 25%;
+  width: 50%;
+  height: 10%;
+  border-radius: 50%;
+  filter: blur(2px);
+  transition: all .3s;
+}
+  
+.quantik-menu-shape:hover::before {
+  opacity: 0.2;
+}
+  
+.quantik-menu-shape img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.quantik-win-animation-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.no-pe {
+  pointer-events: none;
+}
